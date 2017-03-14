@@ -9,7 +9,8 @@ Standalone: How to use
 ----------------------
 
     $ go get github.com/couchbase/moss
-    $ cd $GOPATH/src/github.com/couchbase/moss/cmd/mossScope
+    $ go get github.com/abhinavdangeti/mossScope
+    $ cd $GOPATH/src/github.com/abhinavdangeti/mossScope
     $ go build
     $ ./mossScope --help
 
