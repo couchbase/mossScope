@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/couchbase/moss/cmd/mossScope/cmd"
+import "github.com/couchbase/mossScope/cmd"
 
 func main() {
 	cmd.Execute()
