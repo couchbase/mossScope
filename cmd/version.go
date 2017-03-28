@@ -32,7 +32,7 @@ var versionCmd = &cobra.Command{
 
 func emitVersion() {
 	fmt.Printf("mossScope v%s (moss lib version: %v)\n",
-		version, moss.STORE_VERSION)
+		version, moss.StoreVersion)
 }
 
 func init() {
