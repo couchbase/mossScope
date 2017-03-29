@@ -63,7 +63,7 @@ func invokeDiagStats(dirs []string) error {
 		}
 
 		footer := snap.(*moss.Footer)
-		stats := make(map[string]uint64)
+		stats := make(map[string]interface{})
 
 		fetchFooterStats(footer, stats)
 
@@ -73,7 +73,7 @@ func invokeDiagStats(dirs []string) error {
 		}
 
 		for k, v := range store_stats {
-			stats[k] = v.(uint64)
+			stats[k] = v
 		}
 
 		if jsonFormat {

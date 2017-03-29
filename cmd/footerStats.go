@@ -60,7 +60,7 @@ func invokeFooterStats(dirs []string) error {
 			continue
 		}
 
-		type stats_t map[string]uint64
+		type stats_t map[string]interface{}
 		footer_stats := make(map[string]stats_t)
 		id := 1
 
@@ -114,25 +114,30 @@ func invokeFooterStats(dirs []string) error {
 	return nil
 }
 
-func fetchFooterStats(footer *moss.Footer, stats map[string]uint64) {
+func fetchFooterStats(footer *moss.Footer, stats map[string]interface{}) {
 	if footer == nil {
 		return
 	}
 
-	stats["num_segments"] = uint64(len(footer.SegmentLocs))
-	stats["total_ops_set"] = 0
-	stats["total_ops_del"] = 0
-	stats["total_key_bytes"] = 0
-	stats["total_val_bytes"] = 0
+	var total_ops_set uint64
+	var total_ops_del uint64
+	var total_key_bytes uint64
+	var total_val_bytes uint64
 
 	for i := range footer.SegmentLocs {
 		sloc := &footer.SegmentLocs[i]
 
-		stats["total_ops_set"] += sloc.TotOpsSet
-		stats["total_ops_del"] += sloc.TotOpsDel
-		stats["total_key_bytes"] += sloc.TotKeyByte
-		stats["total_val_bytes"] += sloc.TotValByte
+		total_ops_set += sloc.TotOpsSet
+		total_ops_del += sloc.TotOpsDel
+		total_key_bytes += sloc.TotKeyByte
+		total_val_bytes += sloc.TotValByte
 	}
+
+	stats["num_segments"] = len(footer.SegmentLocs)
+	stats["total_ops_set"] = total_ops_set
+	stats["total_ops_del"] = total_ops_del
+	stats["total_key_bytes"] = total_key_bytes
+	stats["total_val_bytes"] = total_val_bytes
 }
 
 func init() {
