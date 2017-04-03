@@ -32,14 +32,14 @@ format. For example:
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 2 {
-			return fmt.Errorf("A keyname along with at least one path " +
-				"are required!")
+			return fmt.Errorf("a keyname along with at least one path " +
+				"are required")
 		}
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return invokeKey(args[0], args[1:len(args)])
+		return invokeKey(args[0], args[1:])
 	},
 }
 
@@ -48,7 +48,7 @@ var allVersions bool
 func invokeKey(keyname string, dirs []string) error {
 	fmt.Printf("[")
 	for index, dir := range dirs {
-		store, err := moss.OpenStore(dir, ReadOnlyMode)
+		store, err := moss.OpenStore(dir, readOnlyMode)
 		if err != nil || store == nil {
 			return fmt.Errorf("Moss-OpenStore() API failed, err: %v", err)
 		}
@@ -58,8 +58,8 @@ func invokeKey(keyname string, dirs []string) error {
 			return fmt.Errorf("Store-Snapshot() API failed, err: %v", err)
 		}
 
-		curr_snapshot := snap
-		val, err := curr_snapshot.Get([]byte(keyname), moss.ReadOptions{})
+		currSnapshot := snap
+		val, err := currSnapshot.Get([]byte(keyname), moss.ReadOptions{})
 		if err == nil && val != nil {
 			if index != 0 {
 				fmt.Printf(",")
@@ -73,15 +73,15 @@ func invokeKey(keyname string, dirs []string) error {
 
 			if allVersions {
 				for {
-					prev_snapshot, err := store.SnapshotPrevious(curr_snapshot)
-					curr_snapshot.Close()
-					curr_snapshot = prev_snapshot
+					prevSnapshot, err := store.SnapshotPrevious(currSnapshot)
+					currSnapshot.Close()
+					currSnapshot = prevSnapshot
 
-					if err != nil || curr_snapshot == nil {
+					if err != nil || currSnapshot == nil {
 						break
 					}
 
-					val, err := curr_snapshot.Get([]byte(keyname),
+					val, err := currSnapshot.Get([]byte(keyname),
 						moss.ReadOptions{})
 					if err == nil && val != nil {
 						fmt.Printf(",")

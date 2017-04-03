@@ -32,7 +32,7 @@ collected from the latest footer of the store.
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("At least one path is required!")
+			return fmt.Errorf("at least one path is required")
 		}
 		return nil
 	},
@@ -55,39 +55,39 @@ func invokeFooterStats(dirs []string) error {
 		}
 		defer store.Close()
 
-		curr_snap, err := store.Snapshot()
-		if err != nil || curr_snap == nil {
+		currSnap, err := store.Snapshot()
+		if err != nil || currSnap == nil {
 			continue
 		}
 
-		type stats_t map[string]interface{}
-		footer_stats := make(map[string]stats_t)
+		type statsType map[string]interface{}
+		footerStats := make(map[string]statsType)
 		id := 1
 
 		for {
 
-			footer := curr_snap.(*moss.Footer)
-			footer_id := fmt.Sprintf("Footer_%d", id)
-			footer_stats[footer_id] = make(stats_t)
+			footer := currSnap.(*moss.Footer)
+			footerID := fmt.Sprintf("Footer_%d", id)
+			footerStats[footerID] = make(statsType)
 
-			fetchFooterStats(footer, footer_stats[footer_id])
+			fetchFooterStats(footer, footerStats[footerID])
 
 			if !getAll {
 				break
 			}
 
-			prev_snap, err := store.SnapshotPrevious(curr_snap)
-			curr_snap.Close()
-			curr_snap = prev_snap
+			prevSnap, err := store.SnapshotPrevious(currSnap)
+			currSnap.Close()
+			currSnap = prevSnap
 			id++
 
-			if err != nil || curr_snap == nil {
+			if err != nil || currSnap == nil {
 				break
 			}
 		}
 
 		if jsonFormat {
-			jBuf, err := json.Marshal(footer_stats)
+			jBuf, err := json.Marshal(footerStats)
 			if err != nil {
 				return fmt.Errorf("Json-Marshal() failed!, err: %v", err)
 			}
@@ -97,7 +97,7 @@ func invokeFooterStats(dirs []string) error {
 			fmt.Printf("{\"%s\":%s}", dir, string(jBuf))
 		} else {
 			fmt.Println(dir)
-			for f, fstats := range footer_stats {
+			for f, fstats := range footerStats {
 				fmt.Printf("  %s\n", f)
 				for k, v := range fstats {
 					fmt.Printf("%25s : %v\n", k, v)
@@ -119,25 +119,25 @@ func fetchFooterStats(footer *moss.Footer, stats map[string]interface{}) {
 		return
 	}
 
-	var total_ops_set uint64
-	var total_ops_del uint64
-	var total_key_bytes uint64
-	var total_val_bytes uint64
+	var totalOpsSet uint64
+	var totalOpsDel uint64
+	var totalKeyBytes uint64
+	var totalValBytes uint64
 
 	for i := range footer.SegmentLocs {
 		sloc := &footer.SegmentLocs[i]
 
-		total_ops_set += sloc.TotOpsSet
-		total_ops_del += sloc.TotOpsDel
-		total_key_bytes += sloc.TotKeyByte
-		total_val_bytes += sloc.TotValByte
+		totalOpsSet += sloc.TotOpsSet
+		totalOpsDel += sloc.TotOpsDel
+		totalKeyBytes += sloc.TotKeyByte
+		totalValBytes += sloc.TotValByte
 	}
 
 	stats["num_segments"] = len(footer.SegmentLocs)
-	stats["total_ops_set"] = total_ops_set
-	stats["total_ops_del"] = total_ops_del
-	stats["total_key_bytes"] = total_key_bytes
-	stats["total_val_bytes"] = total_val_bytes
+	stats["total_ops_set"] = totalOpsSet
+	stats["total_ops_del"] = totalOpsDel
+	stats["total_key_bytes"] = totalKeyBytes
+	stats["total_val_bytes"] = totalValBytes
 }
 
 func init() {

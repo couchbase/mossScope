@@ -26,7 +26,7 @@ import (
 
 func importHelper(t *testing.T, batchsize int) {
 	// Create a JSON file with some sample content
-	json_text := "[{\"k\":\"key0\",\"v\":\"val0\" }," +
+	jsonText := "[{\"k\":\"key0\",\"v\":\"val0\" }," +
 		"{\"k\":\"key1\",\"v\":\"val1\"}," +
 		"{\"k\":\"key2\",\"v\":\"val2\"}," +
 		"{\"k\":\"key3\",\"v\":\"val3\"}," +
@@ -37,7 +37,7 @@ func importHelper(t *testing.T, batchsize int) {
 		"{\"k\":\"key8\",\"v\":\"val8\"}," +
 		"{\"k\":\"key9\",\"v\":\"val9\"}]"
 
-	temp_dir := "testImportStore"
+	tempDir := "testImportStore"
 
 	// Prevent the command from writing anything to stdout
 	old := os.Stdout // keep backup of the real stdout
@@ -45,7 +45,7 @@ func importHelper(t *testing.T, batchsize int) {
 	os.Stdout = w
 
 	batchSize = batchsize
-	err := invokeImport(json_text, temp_dir)
+	err := invokeImport(jsonText, tempDir)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,9 +64,9 @@ func importHelper(t *testing.T, batchsize int) {
 	os.Stdout = old // restoring the real stdout
 	<-outC
 
-	defer os.RemoveAll(temp_dir)
+	defer os.RemoveAll(tempDir)
 
-	store, err := moss.OpenStore(temp_dir, moss.StoreOptions{})
+	store, err := moss.OpenStore(tempDir, moss.StoreOptions{})
 	if err != nil || store == nil {
 		t.Errorf("Expected OpenStore() to work!")
 	}

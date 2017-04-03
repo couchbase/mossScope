@@ -34,7 +34,7 @@ For example:
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("At least one path is required!")
+			return fmt.Errorf("at least one path is required")
 		}
 		return nil
 	},
@@ -50,7 +50,7 @@ var inHex bool
 func invokeDump(dirs []string) error {
 	fmt.Printf("[")
 	for index, dir := range dirs {
-		store, err := moss.OpenStore(dir, ReadOnlyMode)
+		store, err := moss.OpenStore(dir, readOnlyMode)
 		if err != nil || store == nil {
 			return fmt.Errorf("Moss-OpenStore() API failed, err: %v", err)
 		}

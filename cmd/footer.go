@@ -32,7 +32,7 @@ format, (optionally all) here's a sample command:
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("At least one path is required!")
+			return fmt.Errorf("at least one path is required")
 		}
 		return nil
 	},
@@ -47,13 +47,13 @@ var allAvailable bool
 func invokeFooter(dirs []string) error {
 	fmt.Printf("[")
 	for index, dir := range dirs {
-		store, err := moss.OpenStore(dir, ReadOnlyMode)
+		store, err := moss.OpenStore(dir, readOnlyMode)
 		if err != nil || store == nil {
 			return fmt.Errorf("Moss-OpenStore() API failed, err: %v", err)
 		}
 
-		curr_snap, err := store.Snapshot()
-		if err != nil || curr_snap == nil {
+		currSnap, err := store.Snapshot()
+		if err != nil || currSnap == nil {
 			return fmt.Errorf("Store-Snapshot() API failed, err: %v", err)
 		}
 
@@ -64,32 +64,32 @@ func invokeFooter(dirs []string) error {
 
 		if allAvailable {
 			for {
-				jBuf, err := json.Marshal(curr_snap.(*moss.Footer))
+				jBuf, err := json.Marshal(currSnap.(*moss.Footer))
 				if err != nil {
 					return fmt.Errorf("Json-Marshal() failed!, err: %v", err)
 				}
 
 				fmt.Printf("%s", string(jBuf))
 
-				prev_snap, err := store.SnapshotPrevious(curr_snap)
-				curr_snap.Close()
-				curr_snap = prev_snap
+				prevSnap, err := store.SnapshotPrevious(currSnap)
+				currSnap.Close()
+				currSnap = prevSnap
 
-				if err != nil || curr_snap == nil {
+				if err != nil || currSnap == nil {
 					fmt.Printf("")
 					break
 				}
 				fmt.Printf(",")
 			}
 		} else {
-			jBuf, err := json.Marshal(curr_snap.(*moss.Footer))
+			jBuf, err := json.Marshal(currSnap.(*moss.Footer))
 			if err != nil {
 				return fmt.Errorf("Json-Marshal() failed!, err: %v", err)
 			}
 
 			fmt.Printf("%s", string(jBuf))
 
-			curr_snap.Close()
+			currSnap.Close()
 		}
 		fmt.Printf("]}")
 

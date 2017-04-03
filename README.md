@@ -8,8 +8,7 @@ moss store.
 Standalone: How to use
 ----------------------
 
-    $ go get github.com/couchbase/moss
-    $ go get github.com/couchbase/mossScope
+    $ go get -t github.com/couchbase/mossScope
     $ cd $GOPATH/src/github.com/couchbase/mossScope
     $ go build
     $ ./mossScope --help

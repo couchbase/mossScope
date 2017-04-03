@@ -33,7 +33,7 @@ could assist with decisions around invoking manual compaction.
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("At least one path is required!")
+			return fmt.Errorf("at least one path is required")
 		}
 		return nil
 	},
@@ -54,15 +54,15 @@ func invokeFragStats(dirs []string) error {
 		}
 		defer store.Close()
 
-		stats_map := make(map[string]uint64)
+		statsMap := make(map[string]uint64)
 
-		err = fetchFragStats(store, stats_map)
+		err = fetchFragStats(store, statsMap)
 		if err != nil {
 			return err
 		}
 
 		if jsonFormat {
-			jBuf, err := json.Marshal(stats_map)
+			jBuf, err := json.Marshal(statsMap)
 			if err != nil {
 				return fmt.Errorf("Json-Marshal() failed!, err: %v", err)
 			}
@@ -73,7 +73,7 @@ func invokeFragStats(dirs []string) error {
 			fmt.Printf("%s}", string(jBuf))
 		} else {
 			fmt.Println(dir)
-			for k, v := range stats_map {
+			for k, v := range statsMap {
 				fmt.Printf("%25s : %v\n", k, v)
 			}
 			fmt.Println()
@@ -97,12 +97,12 @@ func fetchFragStats(store *moss.Store, stats map[string]uint64) error {
 	stats["fragmentation_bytes"] = 0
 	stats["fragmentation_percent"] = 0
 
-	curr_snap, err := store.Snapshot()
-	if err != nil || curr_snap == nil {
+	currSnap, err := store.Snapshot()
+	if err != nil || currSnap == nil {
 		return nil
 	}
 
-	footer := curr_snap.(*moss.Footer)
+	footer := currSnap.(*moss.Footer)
 
 	// Acquire key, val bytes from all segments of latest footer
 	for i := range footer.SegmentLocs {
@@ -112,19 +112,21 @@ func fetchFragStats(store *moss.Store, stats map[string]uint64) error {
 		stats["data_bytes"] += sloc.TotValByte
 	}
 
+	var prevSnap moss.Snapshot
+
 	for {
 		// header signature
 		stats["data_bytes"] += moss.HeaderLength()
 
 		// footer signature
-		footer = curr_snap.(*moss.Footer)
+		footer = currSnap.(*moss.Footer)
 		stats["data_bytes"] += footer.Length()
 
-		prev_snap, err := store.SnapshotPrevious(curr_snap)
-		curr_snap.Close()
-		curr_snap = prev_snap
+		prevSnap, err = store.SnapshotPrevious(currSnap)
+		currSnap.Close()
+		currSnap = prevSnap
 
-		if err != nil || curr_snap == nil {
+		if err != nil || currSnap == nil {
 			break
 		}
 	}

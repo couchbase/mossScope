@@ -27,7 +27,7 @@ import (
 	"github.com/couchbase/moss"
 )
 
-var ITEM_COUNT = 10
+var itemCount = 10
 
 func setup(t *testing.T, createDir bool) (d string, s *moss.Store,
 	c moss.Collection) {
@@ -45,12 +45,12 @@ func setup(t *testing.T, createDir bool) (d string, s *moss.Store,
 	coll.Start()
 
 	// Creates
-	batch, err := coll.NewBatch(ITEM_COUNT, ITEM_COUNT*8)
+	batch, err := coll.NewBatch(itemCount, itemCount*8)
 	if err != nil {
 		t.Errorf("Expected NewBatch() to succeed!")
 	}
 
-	for i := 0; i < ITEM_COUNT; i++ {
+	for i := 0; i < itemCount; i++ {
 		k := []byte(fmt.Sprintf("key%d", i))
 		v := []byte(fmt.Sprintf("val%d", i))
 		batch.Set(k, v)
@@ -129,19 +129,19 @@ func TestDump(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data["testDumpStore"] == nil {
+	if storeData["testDumpStore"] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	kvs := store_data["testDumpStore"].([]interface{})
+	kvs := storeData["testDumpStore"].([]interface{})
 
-	if len(kvs) != ITEM_COUNT {
+	if len(kvs) != itemCount {
 		t.Errorf("Incorrect number of entries: %d!", len(kvs))
 	}
 
-	for i := 0; i < ITEM_COUNT; i++ {
+	for i := 0; i < itemCount; i++ {
 		entry := kvs[i].(map[string]interface{})
 		k := fmt.Sprintf("key%d", i)
 		v := fmt.Sprintf("val%d", i)
@@ -163,19 +163,19 @@ func TestDumpKeysOnly(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data["testDumpStore"] == nil {
+	if storeData["testDumpStore"] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	kvs := store_data["testDumpStore"].([]interface{})
+	kvs := storeData["testDumpStore"].([]interface{})
 
-	if len(kvs) != ITEM_COUNT {
+	if len(kvs) != itemCount {
 		t.Errorf("Incorrect number of entries: %d!", len(kvs))
 	}
 
-	for i := 0; i < ITEM_COUNT; i++ {
+	for i := 0; i < itemCount; i++ {
 		entry := kvs[i].(map[string]interface{})
 		k := fmt.Sprintf("key%d", i)
 		if strings.Compare(k, entry["k"].(string)) != 0 {
@@ -187,7 +187,7 @@ func TestDumpKeysOnly(t *testing.T) {
 func TestDumpKey(t *testing.T) {
 	dir, store, coll := setup(t, true)
 
-	for i := 0; i < ITEM_COUNT; i++ {
+	for i := 0; i < itemCount; i++ {
 		old := os.Stdout // keep backup of the real stdout
 		r, w, _ := os.Pipe()
 		os.Stdout = w
@@ -220,13 +220,13 @@ func TestDumpKey(t *testing.T) {
 			t.Errorf("Expected one directory, but count: %d!", len(m))
 		}
 
-		store_data := m[0].(map[string]interface{})
+		storeData := m[0].(map[string]interface{})
 
-		if store_data[dir] == nil {
+		if storeData[dir] == nil {
 			t.Errorf("Expected directory not found!")
 		}
 
-		kvs := store_data[dir].([]interface{})
+		kvs := storeData[dir].([]interface{})
 
 		if len(kvs) != 1 {
 			t.Errorf("Incorrect number of entries: %d!", len(kvs))
@@ -253,7 +253,7 @@ func TestDumpKeyAllVersions(t *testing.T) {
 	// Updates
 	dir, store, coll := setup(t, false)
 
-	for i := 0; i < ITEM_COUNT; i++ {
+	for i := 0; i < itemCount; i++ {
 		old := os.Stdout // keep backup of the real stdout
 		r, w, _ := os.Pipe()
 		os.Stdout = w
@@ -286,13 +286,13 @@ func TestDumpKeyAllVersions(t *testing.T) {
 			t.Errorf("Expected one directory, but count: %d!", len(m))
 		}
 
-		store_data := m[0].(map[string]interface{})
+		storeData := m[0].(map[string]interface{})
 
-		if store_data[dir] == nil {
+		if storeData[dir] == nil {
 			t.Errorf("Expected directory not found!")
 		}
 
-		kvs := store_data[dir].([]interface{})
+		kvs := storeData[dir].([]interface{})
 
 		if len(kvs) != 2 {
 			t.Errorf("Incorrect number of entries: %d!", len(kvs))
@@ -354,13 +354,13 @@ func TestDumpAllFooters(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data[dir] == nil {
+	if storeData[dir] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	kvs := store_data[dir].([]interface{})
+	kvs := storeData[dir].([]interface{})
 
 	if len(kvs) != 2 {
 		t.Errorf("Incorrect number of entries: %d!", len(kvs))
@@ -376,7 +376,7 @@ func TestDumpAllFooters(t *testing.T) {
 
 	for i := 0; i < records.Len(); i++ {
 		stats := (records.Index(i).Interface()).(map[string]interface{})
-		if stats["TotOpsSet"].(float64) != float64(ITEM_COUNT) {
+		if stats["TotOpsSet"].(float64) != float64(itemCount) {
 			t.Errorf("[Footer2] Unexpected value for TotOpsSet stat: %d!",
 				stats["TotOpsSet"])
 		}
@@ -395,7 +395,7 @@ func TestDumpAllFooters(t *testing.T) {
 	}
 
 	stats := (records.Index(0).Interface()).(map[string]interface{})
-	if stats["TotOpsSet"].(float64) != float64(ITEM_COUNT) {
+	if stats["TotOpsSet"].(float64) != float64(itemCount) {
 		t.Errorf("[Footer1] Unexpected value for TotOpsSet stat: %d!",
 			stats["TotOpsSet"])
 	}

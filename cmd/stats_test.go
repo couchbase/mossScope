@@ -41,7 +41,6 @@ func initStore(t *testing.T, createDir bool, batches int) (d string,
 	var m sync.Mutex
 	var waitingForCleanCh chan struct{}
 
-	var err error
 	var store *moss.Store
 	var coll moss.Collection
 
@@ -61,6 +60,8 @@ func initStore(t *testing.T, createDir bool, batches int) (d string,
 			}
 		},
 	}
+
+	var err error
 
 	store, coll, err = moss.OpenStoreCollection(dir,
 		moss.StoreOptions{CollectionOptions: co},
@@ -195,23 +196,23 @@ func TestLatestFooterStats(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data["testStatsStore"] == nil {
+	if storeData["testStatsStore"] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	if len(store_data) != 1 {
+	if len(storeData) != 1 {
 		t.Errorf("Expected 1 footer only!")
 	}
 
-	footer_data := store_data["testStatsStore"].(map[string]interface{})
+	footerData := storeData["testStatsStore"].(map[string]interface{})
 
-	if footer_data["Footer_1"] == nil {
+	if footerData["Footer_1"] == nil {
 		t.Errorf("Expected Footer_1 to be the latest footer!")
 	}
 
-	stats := footer_data["Footer_1"].(map[string]interface{})
+	stats := footerData["Footer_1"].(map[string]interface{})
 
 	if stats["total_ops_set"] != float64(2*ITEMS) {
 		t.Errorf("Unexpected total_ops_set: %v!",
@@ -238,13 +239,13 @@ func TestFragmentationStats(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data["testStatsStore"] == nil {
+	if storeData["testStatsStore"] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	stats := store_data["testStatsStore"].(map[string]interface{})
+	stats := storeData["testStatsStore"].(map[string]interface{})
 
 	if stats["data_bytes"] == nil {
 		t.Errorf("Expected an entry for data_bytes!")
@@ -272,13 +273,13 @@ func TestDiagStats(t *testing.T) {
 		t.Errorf("Expected one directory, but count: %d!", len(m))
 	}
 
-	store_data := m[0].(map[string]interface{})
+	storeData := m[0].(map[string]interface{})
 
-	if store_data["testStatsStore"] == nil {
+	if storeData["testStatsStore"] == nil {
 		t.Errorf("Expected directory not found!")
 	}
 
-	stats := store_data["testStatsStore"].(map[string]interface{})
+	stats := storeData["testStatsStore"].(map[string]interface{})
 
 	if stats["total_ops_set"] != float64(2*ITEMS) {
 		t.Errorf("Unexpected total_ops_set: %v!",
