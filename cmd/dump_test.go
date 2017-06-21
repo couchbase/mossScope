@@ -33,6 +33,7 @@ func setup(t *testing.T, createDir bool) (d string, s *moss.Store,
 	c moss.Collection) {
 	dir := "testDumpStore"
 	if createDir {
+		os.RemoveAll(dir)
 		os.Mkdir(dir, 0777)
 	}
 
@@ -185,7 +186,7 @@ func TestDumpKeysOnly(t *testing.T) {
 }
 
 func TestDumpPrefixed(t *testing.T) {
-	keyPrefix = "key"
+	keyPrefix = "key0"
 	out := dumpHelper(t, true)
 
 	var m []interface{}
@@ -202,11 +203,11 @@ func TestDumpPrefixed(t *testing.T) {
 
 	kvs := storeData["testDumpStore"].([]interface{})
 
-	if len(kvs) != itemCount {
+	if len(kvs) != 1 {
 		t.Errorf("Incorrect number of entries: %d!", len(kvs))
 	}
 
-	for i := 0; i < itemCount; i++ {
+	for i := 0; i < 1; i++ {
 		entry := kvs[i].(map[string]interface{})
 		k := fmt.Sprintf("key%d", i)
 		if strings.Compare(k, entry["k"].(string)) != 0 {

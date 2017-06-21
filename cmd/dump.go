@@ -72,29 +72,25 @@ func invokeDump(dirs []string) error {
 		fmt.Printf("{\"%s\":", dir)
 
 		fmt.Printf("[")
-		for {
-			k, v, err := iter.Current()
+		for err, firstDoc := error(nil), true; err == nil; err = iter.Next() {
+			var k, v []byte
+			k, v, err = iter.Current()
 			if err != nil {
 				break
 			}
 
-			if keyPrefix == "" || strings.HasPrefix(string(k), keyPrefix) {
-				if keysOnly {
-					err = dumpKeyVal(k, nil, inHex)
-				} else {
-					err = dumpKeyVal(k, v, inHex)
-				}
-
-				if err != nil {
-					return err
-				}
+			if keyPrefix != "" && !strings.HasPrefix(string(k), keyPrefix) {
+				continue
+			}
+			if keysOnly {
+				err = dumpKeyVal(k, nil, inHex, &firstDoc)
+			} else {
+				err = dumpKeyVal(k, v, inHex, &firstDoc)
 			}
 
-			if iter.Next() == moss.ErrIteratorDone {
-				break
+			if err != nil {
+				return err
 			}
-
-			fmt.Printf(",")
 		}
 		fmt.Printf("]")
 
@@ -109,8 +105,13 @@ func invokeDump(dirs []string) error {
 	return nil
 }
 
-func dumpKeyVal(key []byte, val []byte, toHex bool) error {
+func dumpKeyVal(key []byte, val []byte, toHex bool, firstDoc *bool) error {
 	if toHex {
+		if !*firstDoc {
+			fmt.Printf(",")
+		} else {
+			*firstDoc = false
+		}
 		if val == nil {
 			fmt.Printf("{\"k\":\"%s\"}", hex.EncodeToString(key))
 		} else {
@@ -121,6 +122,11 @@ func dumpKeyVal(key []byte, val []byte, toHex bool) error {
 		jBufk, err := json.Marshal(string(key))
 		if err != nil {
 			return fmt.Errorf("Json-Marshal() failed!, err: %v", err)
+		}
+		if !*firstDoc {
+			fmt.Printf(",")
+		} else {
+			*firstDoc = false
 		}
 		if val == nil {
 			fmt.Printf("{\"k\":%s}", string(jBufk))

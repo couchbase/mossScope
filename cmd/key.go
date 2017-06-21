@@ -65,8 +65,9 @@ func invokeKey(keyname string, dirs []string) error {
 				fmt.Printf(",")
 			}
 			fmt.Printf("{\"%s\":[", dir)
+			firstKey := true
 
-			err = dumpKeyVal([]byte(keyname), val, inHex)
+			err = dumpKeyVal([]byte(keyname), val, inHex, &firstKey)
 			if err != nil {
 				return err
 			}
@@ -84,8 +85,7 @@ func invokeKey(keyname string, dirs []string) error {
 					val, err := currSnapshot.Get([]byte(keyname),
 						moss.ReadOptions{})
 					if err == nil && val != nil {
-						fmt.Printf(",")
-						err = dumpKeyVal([]byte(keyname), val, inHex)
+						err = dumpKeyVal([]byte(keyname), val, inHex, &firstKey)
 						if err != nil {
 							return err
 						}

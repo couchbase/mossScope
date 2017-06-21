@@ -123,6 +123,7 @@ func fetchFooterStats(footer *moss.Footer, stats map[string]interface{}) {
 	var totalOpsDel uint64
 	var totalKeyBytes uint64
 	var totalValBytes uint64
+	segmentBytes := make([]uint64, 0, len(footer.SegmentLocs))
 
 	for i := range footer.SegmentLocs {
 		sloc := &footer.SegmentLocs[i]
@@ -131,8 +132,10 @@ func fetchFooterStats(footer *moss.Footer, stats map[string]interface{}) {
 		totalOpsDel += sloc.TotOpsDel
 		totalKeyBytes += sloc.TotKeyByte
 		totalValBytes += sloc.TotValByte
+		segmentBytes = append(segmentBytes, sloc.TotKeyByte+sloc.TotValByte)
 	}
 
+	stats["segment_bytes"] = segmentBytes
 	stats["num_segments"] = len(footer.SegmentLocs)
 	stats["total_ops_set"] = totalOpsSet
 	stats["total_ops_del"] = totalOpsDel

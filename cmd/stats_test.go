@@ -35,6 +35,7 @@ func initStore(t *testing.T, createDir bool, batches int) (d string,
 
 	dir := "testStatsStore"
 	if createDir {
+		os.RemoveAll(dir)
 		os.Mkdir(dir, 0777)
 	}
 
@@ -228,6 +229,12 @@ func TestLatestFooterStats(t *testing.T) {
 		t.Errorf("Unexpected val bytes: %v!",
 			stats["total_val_bytes"])
 	}
+
+	segBytes := stats["segment_bytes"].([]interface{})
+	seg0Bytes := segBytes[0].(float64)
+	if seg0Bytes < float64(ITEMS) {
+		t.Errorf("Unexpected segment_bytes: %v!", stats["segment_bytes"])
+	}
 }
 
 func TestFragmentationStats(t *testing.T) {
@@ -315,6 +322,7 @@ func TestDiagStats(t *testing.T) {
 }
 
 func TestHistStats(t *testing.T) {
+	keyPrefix = "" // Clear out any previous key prefix from prior tests.
 	out := init2FootersAndInterceptStdout(t, 1, HISTSTATS)
 	expect := `"testStatsStore"
 KeySizes(B)  (5 Total)
