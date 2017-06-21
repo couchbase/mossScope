@@ -33,6 +33,7 @@ store, among other things.`,
 }
 
 var version = "0.1.0"
+var keyPrefix string
 
 var readOnlyMode = moss.StoreOptions{KeepFiles: true,
 	CollectionOptions: moss.CollectionOptions{ReadOnly: true}}

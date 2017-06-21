@@ -43,8 +43,6 @@ available from the store.
 	},
 }
 
-var keyPrefix string
-
 func invokeHistStats(dirs []string) error {
 	for _, dir := range dirs {
 		store, err := moss.OpenStore(dir, readOnlyMode)

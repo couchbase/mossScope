@@ -184,6 +184,37 @@ func TestDumpKeysOnly(t *testing.T) {
 	}
 }
 
+func TestDumpPrefixed(t *testing.T) {
+	keyPrefix = "key"
+	out := dumpHelper(t, true)
+
+	var m []interface{}
+	json.Unmarshal([]byte(out), &m)
+	if len(m) != 1 {
+		t.Errorf("Expected one directory, but count: %d!", len(m))
+	}
+
+	storeData := m[0].(map[string]interface{})
+
+	if storeData["testDumpStore"] == nil {
+		t.Errorf("Expected directory not found!")
+	}
+
+	kvs := storeData["testDumpStore"].([]interface{})
+
+	if len(kvs) != itemCount {
+		t.Errorf("Incorrect number of entries: %d!", len(kvs))
+	}
+
+	for i := 0; i < itemCount; i++ {
+		entry := kvs[i].(map[string]interface{})
+		k := fmt.Sprintf("key%d", i)
+		if strings.Compare(k, entry["k"].(string)) != 0 {
+			t.Errorf("Mismatch in key [%s != %s]!", k, entry["k"].(string))
+		}
+	}
+}
+
 func TestDumpKey(t *testing.T) {
 	dir, store, coll := setup(t, true)
 

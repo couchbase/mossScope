@@ -18,6 +18,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/couchbase/moss"
 	"github.com/spf13/cobra"
@@ -77,14 +78,16 @@ func invokeDump(dirs []string) error {
 				break
 			}
 
-			if keysOnly {
-				err = dumpKeyVal(k, nil, inHex)
-			} else {
-				err = dumpKeyVal(k, v, inHex)
-			}
+			if keyPrefix == "" || strings.HasPrefix(string(k), keyPrefix) {
+				if keysOnly {
+					err = dumpKeyVal(k, nil, inHex)
+				} else {
+					err = dumpKeyVal(k, v, inHex)
+				}
 
-			if err != nil {
-				return err
+				if err != nil {
+					return err
+				}
 			}
 
 			if iter.Next() == moss.ErrIteratorDone {
@@ -139,6 +142,8 @@ func init() {
 	// Local flags that are intended to work as a filter over dump
 	dumpCmd.Flags().BoolVar(&keysOnly, "keys-only", false,
 		"Emits keys only")
+	dumpCmd.Flags().StringVar(&keyPrefix, "key-prefix", "",
+		"Emits only keys matching this key prefix. Example --key-prefix b")
 	dumpCmd.Flags().BoolVar(&inHex, "hex", false,
 		"Emits output in hex")
 }
