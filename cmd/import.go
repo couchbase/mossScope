@@ -304,7 +304,7 @@ func invokeImport(jsonStr string, dir string) error {
 func init() {
 	RootCmd.AddCommand(importCmd)
 
-	// Local flags that is intended to work as a flag over import
+	// Local flags that are intended to work with import
 	importCmd.Flags().IntVar(&batchSize, "batchsize", 0,
 		"Batch-size for the set operations (default: all docs in one batch)")
 	importCmd.Flags().StringVar(&fileInput, "file", "",

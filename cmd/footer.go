@@ -103,7 +103,7 @@ func invokeFooter(dirs []string) error {
 func init() {
 	dumpCmd.AddCommand(footerCmd)
 
-	// Local flag that is intended to work as a flag over dump footer
+	// Local flag that is intended to work with dump footer
 	footerCmd.Flags().BoolVar(&allAvailable, "all", false,
 		"Fetches all the available footers")
 }

@@ -100,7 +100,7 @@ func invokeHistStats(dirs []string) error {
 func init() {
 	statsCmd.AddCommand(histCmd)
 
-	// Local flag that is intended to work as a flag over stats hist
+	// Local flag that is intended to work with stats hist
 	histCmd.Flags().StringVar(&keyPrefix, "key-prefix", "",
 		"Emits histograms of keys that begin with the specified prefix")
 }

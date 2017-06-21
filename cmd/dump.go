@@ -139,7 +139,7 @@ func dumpKeyVal(key []byte, val []byte, toHex bool) error {
 func init() {
 	RootCmd.AddCommand(dumpCmd)
 
-	// Local flags that are intended to work as a filter over dump
+	// Local flags that are intended to work with dump
 	dumpCmd.Flags().BoolVar(&keysOnly, "keys-only", false,
 		"Emits keys only")
 	dumpCmd.Flags().StringVar(&keyPrefix, "key-prefix", "",
