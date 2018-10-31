@@ -49,7 +49,7 @@ func invokeFooterStats(dirs []string) error {
 		fmt.Printf("[")
 	}
 	for index, dir := range dirs {
-		store, err := moss.OpenStore(dir, moss.StoreOptions{})
+		store, err := moss.OpenStore(dir, readOnlyMode)
 		if err != nil || store == nil {
 			return fmt.Errorf("Moss-OpenStore() API failed, err: %v", err)
 		}
